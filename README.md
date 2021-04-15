@@ -8,6 +8,7 @@ Execute commands to get one question of the day
 ```
 # install
 go get -u github.com/getbuguai/One-question-per-day
+mv $GOBIN/One-question-per-day $GOBIN/oneq
 
 # run
 oneq
