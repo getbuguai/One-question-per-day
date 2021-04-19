@@ -2,13 +2,25 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os/exec"
+	"runtime"
 	"strings"
 )
 
+var openBrowser bool
+
+func init() {
+	flag.BoolVar(&openBrowser, "ob", false, "open browser")
+}
+
 func main() {
+	flag.Parse()
+
 	fmt.Println("Hello BuGuai !!! ")
 
 	url := "https://leetcode-cn.com/graphql"
@@ -68,4 +80,27 @@ func main() {
 
 	oneQUrl := fmt.Sprintf("https://leetcode-cn.com/problems/%s/", oneq.Data.TodayRecord[0].Question.QuestionTitleSlug)
 	fmt.Printf("----------------------\n> Number: %s \n> URL: %s \n", oneq.Data.TodayRecord[0].Question.QuestionFrontendId, oneQUrl)
+
+	if openBrowser {
+		openbrowser(oneQUrl)
+	}
+}
+
+func openbrowser(url string) {
+	var err error
+
+	switch runtime.GOOS {
+	case "linux":
+		err = exec.Command("xdg-open", url).Start()
+	case "windows":
+		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+	case "darwin":
+		err = exec.Command("open", url).Start()
+	default:
+		err = fmt.Errorf("unsupported platform")
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
